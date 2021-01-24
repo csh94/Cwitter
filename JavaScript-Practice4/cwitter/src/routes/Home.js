@@ -1,11 +1,11 @@
 import { dbService } from "fbase";
 import React, { useEffect, useState } from "react";
 
-const Home = () => {
+const Home = ({userObj}) => {
     const [cweet, setCweet] = useState("");
     const [cweets, setCweets] = useState([]);
     //컴포넌트가 mount 될때 우리는 getCweets를 실행하지.
-    const getCweets = async() => {
+    /*const getCweets = async() => {
         const dbCweets = await dbService.collection("cweets").get();
         dbCweets.forEach((document) => {
             const cweetObject = {
@@ -14,15 +14,24 @@ const Home = () => {
             };
             setCweets(prev => [cweetObject, ...prev])
         });
-    };
+    };*/
     useEffect(() => {
-        getCweets();
+        //이건 구식 방식이야. getCweets();
+        //아래껀 스냅샷방식으로 리얼타임!
+        dbService.collection("cweets").onSnapshot(snapshot => {
+            const cweetArray = snapshot.docs.map(doc => ({
+                id:doc.id,
+                ...doc.data(),
+            }));
+            setCweets(cweetArray);
+        });
     }, []);
     const onSubmit = async (event) => {
       event.preventDefault();  
       await dbService.collection("cweets").add({
-          cweet,
+          text: cweet,
           createdAt: Date.now(),
+          creatorId: userObj.uid,
       });
       setCweet("");
     };
@@ -31,7 +40,7 @@ const Home = () => {
         setCweet(value);
     };
     //event로부터 라는 의미지. 즉, event 안에 있는 target안에 있는 value를 달라.
-    console.log(cweets);
+
     return (
         <div>    
             <form onSubmit={onSubmit}>
@@ -41,7 +50,7 @@ const Home = () => {
             <div>
                 {cweets.map((cweet) => (
                     <div key={cweet.id}>
-                        <h4>{cweet.cweet}</h4>
+                        <h4>{cweet.text}</h4>
                     </div>
                 ))}
             </div>
