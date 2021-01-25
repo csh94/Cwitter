@@ -19,6 +19,8 @@ const Home = ({userObj}) => {
     useEffect(() => {
         //이건 구식 방식이야. getCweets();
         //아래껀 스냅샷방식으로 리얼타임!
+        /* onsnapshot 은 데이터베이스에 무슨일이 있을때 알림을 받음
+        새로운 스냅샷을 받을 때 배열을 만들고, 그다음 state에 배열을 넣음. */ 
         dbService.collection("cweets").onSnapshot(snapshot => {
             const cweetArray = snapshot.docs.map(doc => ({
                 id:doc.id,
