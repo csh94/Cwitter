@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 const Home = ({userObj}) => {
     const [cweet, setCweet] = useState("");
     const [cweets, setCweets] = useState([]);
+    const [attachment, setAttachment] = useState();
     //컴포넌트가 mount 될때 우리는 getCweets를 실행하지.
     /*const getCweets = async() => {
         const dbCweets = await dbService.collection("cweets").get();
@@ -43,12 +44,34 @@ const Home = ({userObj}) => {
         setCweet(value);
     };
     //event로부터 라는 의미지. 즉, event 안에 있는 target안에 있는 value를 달라.
-
+    const onFileChange = (event) => {
+        const {
+            target: {files},
+        } = event;
+        const theFile = files[0];
+        const reader = new FileReader();
+        reader.onloadend = (finishedEvent) => {
+            const {
+                currentTarget: {result},
+            } = finishedEvent;
+            setAttachment(result);
+        };
+        reader.readAsDataURL(theFile);
+    };
+    //event 안에서 target 안으로 가서 파일을 받아오는 것을 의미
+    const onClearAttachment = () => setAttachment(null);
     return (
         <div>    
             <form onSubmit={onSubmit}>
                 <input value={cweet} onChange={onChange} type="text" placeholder="What's on your mind?" maxLength={120} />
+                <input type="file" accept="image/*" onChange={onFileChange} />
                 <input type="submit" value="Cweet" />
+                {attachment && (
+                    <div>
+                        <img src={attachment} width="50px" height="50px" />
+                        <button onClick={onClearAttachment}>Clear</button>
+                    </div>    
+                )}
             </form>
             <div>
                 {cweets.map((cweet) => (
