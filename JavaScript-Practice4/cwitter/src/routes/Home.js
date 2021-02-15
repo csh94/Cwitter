@@ -1,6 +1,7 @@
 import Cweet from "components/Cweet";
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 const Home = ({userObj}) => {
     const [cweet, setCweet] = useState("");
@@ -32,12 +33,15 @@ const Home = ({userObj}) => {
     }, []);
     const onSubmit = async (event) => {
       event.preventDefault();  
-      await dbService.collection("cweets").add({
+      const fileRef = storageService.ref().child(`${userObj.uid}/${uuidv4()}`);
+      const response = await fileRef.putString(attachment, "data_url");
+      console.log(response);
+      /*await dbService.collection("cweets").add({
           text: cweet,
           createdAt: Date.now(),
           creatorId: userObj.uid,
       });
-      setCweet("");
+      setCweet("");*/
     };
     const onChange = (event) => {
         const {target:{value}} = event;
