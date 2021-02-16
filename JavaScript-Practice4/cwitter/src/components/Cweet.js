@@ -1,4 +1,4 @@
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import React, { useState } from "react";
 
 const Cweet = ({cweetObj, isOwner}) => {
@@ -8,6 +8,7 @@ const Cweet = ({cweetObj, isOwner}) => {
         const ok = window.confirm("Are you sure you want to delete this cweet?");
         if(ok){
             await dbService.doc(`cweets/${cweetObj.id}`).delete();
+            await storageService.refFromURL(cweetObj.attachmentUrl).delete();
         } 
     };
     const toggleEditing = () => setEditing((prev) => !prev);
@@ -44,6 +45,7 @@ const Cweet = ({cweetObj, isOwner}) => {
             ) : (
             <> 
                 <h4>{cweetObj.text}</h4>
+                {cweetObj.attachmentUrl && <img src={cweetObj.attachmentUrl} width="50px" height="50px" />}
                 {isOwner && (
                     <> 
                         <button onClick={onDeleteClick}>Delete Cweet</button>
