@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 const Home = ({userObj}) => {
     const [cweet, setCweet] = useState("");
     const [cweets, setCweets] = useState([]);
-    const [attachment, setAttachment] = useState();
+    const [attachment, setAttachment] = useState("");
     //컴포넌트가 mount 될때 우리는 getCweets를 실행하지.
     /*const getCweets = async() => {
         const dbCweets = await dbService.collection("cweets").get();
